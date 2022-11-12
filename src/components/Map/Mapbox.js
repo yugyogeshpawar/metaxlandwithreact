@@ -1,7 +1,9 @@
 import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
 import * as MaplibreGrid from 'maplibre-grid';
+import 'react-map-gl-geocoder/dist/mapbox-gl-geocoder.css'
 
+import 'mapbox-gl/dist/mapbox-gl.css'
 
 mapboxgl.accessToken = 'pk.eyJ1Ijoia2lkcm9vdCIsImEiOiJjbDltbWJ3YTAwMW55NDFtdWU3cGlrdnl2In0.rbBE0meHwOeb4tzl4vEyyA';
 
@@ -15,13 +17,12 @@ function Mapbox() {
     const [lat, setLat] = useState(42.3498);
     const [zoom, setZoom] = useState(14);
 
-
     const grid = new MaplibreGrid.Grid({
-        gridWidth: 0.08,
-        gridHeight: 0.05,
+        gridWidth: 0.03,
+        gridHeight: 0.03,
         units: 'kilometers',
-        minZoom: 13,
-        maxZoom: 16,
+        minZoom: 14,
+        maxZoom: 20,
         paint: {
             'line-opacity': 1
         }
@@ -32,7 +33,7 @@ function Mapbox() {
         if (map.current) return; // initialize map only once
         map.current = new mapboxgl.Map({
             container: mapContainer.current,
-            style: 'mapbox://styles/kidroot/cl9n18vdd00fr14mqq560gyn3',
+            style: 'mapbox://styles/mapbox/satellite-v9',
             center: [lng, lat],
             zoom: zoom
         });
@@ -46,8 +47,6 @@ function Mapbox() {
             setZoom(map.current.getZoom().toFixed(2));
         });
 
-
-
     }, []);
 
     useEffect(() => {
@@ -60,7 +59,6 @@ function Mapbox() {
                 data: { type: 'FeatureCollection', features: selectedCells }
             });
 
-
             map.current.addLayer({
                 id: selectedCellsId,
                 source: selectedCellsId,
@@ -71,7 +69,6 @@ function Mapbox() {
                     'fill-outline-color': 'transparent'
                 }
             });
-
 
             map.current.on(MaplibreGrid.GRID_CLICK_EVENT, event => {
                 const bbox = event.bbox;
@@ -92,22 +89,23 @@ function Mapbox() {
                 } else {
                     selectedCells.splice(cellIndex, 1);
                 }
-
-                const source =  map.current.getSource(selectedCellsId);
+                const source = map.current.getSource(selectedCellsId);
                 source.setData({ type: 'FeatureCollection', features: selectedCells });
-
             });
-        });
 
+            
+
+
+        });
 
     }, []);
 
     return (
         <div>
-            <div className="sidebar2">
-                Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
-            </div>
-            <div ref={mapContainer} className="map-container" />
+                <div className="sidebar2">
+                    Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
+                </div>
+                <div ref={mapContainer} className="map-container" />
 
         </div>
     )
