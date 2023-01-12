@@ -12,7 +12,7 @@ contract Marketplace is ReentrancyGuard {
     Counters.Counter private _itemsSold; 
     Counters.Counter private _tokenIds;
 
-    address payable owner; 
+    address payable owner;
     uint256 private platformFee;
     address private feeRecipient;
     uint256 private artnotionnfts;
